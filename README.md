@@ -7,7 +7,7 @@ Esam Abualrous (e.abualrous[at]fu-berlin.de)
    Calculates the geometrical parameters (r, theta, phi) of T cell receptors (TCR) on the top of MHC proteins
 
 ### Python script
-**USAGE**
+USAGE
 ---------
 For peptide-MHC class I-TCR complex:
 python TCR_position_BioPy_v1.py --pdbfile XXX.pdb --mhc_chain_a A --tcr_chain_a D --tcr_chain_b E 
@@ -16,7 +16,7 @@ For peptide-MHC class II-TCR complex:
 python TCR_position_BioPy_v1.py --pdbfile XXX.pdb --mhc_chain_a A --mhc_chain_b A --tcr_chain_a D --tcr_chain_b E 
 
 ### Pymol plugin
-**USAGE**
+USAGE
 ---------
 For peptide-MHC class I-TCR complex:
 tcr_mhci_pos selection [,mhc_a=None [,tcr_a = None [,tcr_b = None [,mhc_a_init=1 [,mhc_a_final=180 [,tcr_a_init=1 [,tcr_a_final=109 [, tcr_b_init=1 [,tcr_b_final=116 [,state=None ]]]]]]]]]]
