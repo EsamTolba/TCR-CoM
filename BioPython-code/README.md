@@ -1,6 +1,7 @@
-#######################
 TCR-CoM.py
+
 #######################
+
 For questions about running the script or for reporting bugs, please contact either: Brian Baker (brian-baker[at]nd.edu) or Esam Abualrous (e.abualrous[at]fu-berlin.de)
 
 DESCRIPTION
