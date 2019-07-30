@@ -1,4 +1,4 @@
-# TCR_CoM
+# TCR-CoM
 For questions about running the script or for reporting bugs, please contact either:
 Brian Baker (brian-baker[at]nd.edu)
 or
