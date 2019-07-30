@@ -19,10 +19,10 @@ import Bio.PDB
 import argparse
 parser = argparse.ArgumentParser(description='Process input file.')
 parser.add_argument('--pdbfile', type=str)
-parser.add_argument('--mhc_1_chain', type=str)
-parser.add_argument('--mhc_2_chain', type=str, default=None)
-parser.add_argument('--tcr_a_chain', type=str)
-parser.add_argument('--tcr_b_chain', type=str)
+parser.add_argument('--mhc_chain_a', type=str)
+parser.add_argument('--mhc_chain_b', type=str, default=None)
+parser.add_argument('--tcr_chain_a', type=str)
+parser.add_argument('--tcr_chain_b', type=str)
 
 reffile1="ref1.pdb"
 reffile2="ref2.pdb"
@@ -234,14 +234,14 @@ def tcr_mhcii_pos(pdbid, mhc_a='A', mhc_b='B', tcr_a='D', tcr_b='E',
 
 args = parser.parse_args()
 pdbfile = args.pdbfile
-mhc_1_chain = args.mhc_1_chain
-mhc_2_chain = args.mhc_2_chain
-tcr_a_chain = args.tcr_a_chain
-tcr_b_chain = args.tcr_b_chain
+mhc_chain_a = args.mhc_chain_a
+mhc_chain_b = args.mhc_chain_b
+tcr_chain_a = args.tcr_chain_a
+tcr_chain_b = args.tcr_chain_b
 
-if mhc_2_chain is None:
-    tcr_mhci_pos(pdbfile, mhc_1_chain, tcr_a_chain, tcr_b_chain)
+if mhc_chain_b is None:
+    tcr_mhci_pos(pdbfile, mhc_chain_a, tcr_chain_a, tcr_chain_b)
 else:
-    tcr_mhcii_pos(pdbfile, mhc_1_chain, mhc_2_chain, tcr_a_chain, tcr_b_chain)
+    tcr_mhcii_pos(pdbfile, mhc_chain_a, mhc_chain_b, tcr_chain_a, tcr_chain_b)
 
-# In[ ]:
+# In[ ]
