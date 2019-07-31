@@ -78,7 +78,7 @@ def center_of_mass(entity, geometric=False):
 
 
 """Geometrical parameters of TCR-MHC class I"""
-def tcr_mhci_pos(pdfile, mhc_a='A', tcr_a='D', tcr_b='E',
+def tcr_mhci_pos(pdbid, mhc_a='A', tcr_a='D', tcr_b='E',
                  mhc_a_init=1, mhc_a_final=179,
                  tcr_a_init=1, tcr_a_final=109,
                  tcr_b_init=1, tcr_b_final=116):
