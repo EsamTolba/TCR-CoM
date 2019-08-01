@@ -12,7 +12,7 @@ __USAGE__
 
 1- For peptide-MHC class I-TCR complex:
 ```
-python TCR_position_BioPy_v1.py -pdbfile XXX.pdb -mhc_chain_a A -tcr_chain_a D -tcr_chain_b E
+python TCR_com_v3.py -pdbfile XXX.pdb -mhc_chain_a A -tcr_chain_a D -tcr_chain_b E
 ``` 
 
 2- For peptide-MHC class II-TCR complex:
