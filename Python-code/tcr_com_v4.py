@@ -7,6 +7,9 @@ import os
 import argparse
 import numpy as np
 import Bio.PDB
+from Bio.PDB.Chain import Chain
+from Bio.PDB.Residue import Residue
+from Bio.PDB.Atom import Atom
 from Bio.Cluster import pca
 from itertools import chain
 
@@ -23,6 +26,26 @@ parser.add_argument("-mhc_b", type=str, default=None, help="ID of MHC beta chain
 parser.add_argument("-tcr_a", type=str, help="ID of TCR alpha chain")
 parser.add_argument("-tcr_b", type=str, help="ID of TCR beta chain")
 parser.add_argument("-output_pdb", type=str, help="Output_PDB_structure")
+
+
+def add_com_to_pdb(mhci_com, vtcr_com, sample_structure):
+    #mhc_com
+    mhc_com_chain = 'X'
+    sample_structure.add(Chain(mhc_com_chain))
+    res_id = (' ', 1, ' ')
+    new_residue = Residue(res_id, "MCM", ' ') 
+    new_atom = Atom("C", mhci_com, 0, 0.0, ' ', "C", 1, "C")
+    new_residue.add(new_atom)
+    sample_structure.child_dict[mhc_com_chain].add(new_residue)
+    #tcr com
+    tcr_com_chain = 'Y'
+    sample_structure.add(Chain(tcr_com_chain))
+    res_id = (' ', 1, ' ')
+    new_residue = Residue(res_id, "TCM", ' ') 
+    new_atom = Atom("C", vtcr_com, 0, 0.0, ' ', "C", 1, "C")
+    new_residue.add(new_atom)
+    sample_structure.child_dict[tcr_com_chain].add(new_residue)
+    return sample_structure
 
 """
 Module with assorted geometrical functions on
@@ -226,8 +249,9 @@ def tcr_mhci_geometrical_parameters(
     # Save final structure#
     #######################
     if persist_structure:
+        ali_structure = add_com_to_pdb(mhci_com_3, vtcr_com, sample_model)
         io = Bio.PDB.PDBIO()
-        io.set_structure(sample_model)
+        io.set_structure(ali_structure)
         io.save("./%s_rotated.pdb" % pdbid)
 
     ###################################
@@ -318,8 +342,9 @@ def tcr_mhcii_geometrical_parameters(
     # Save final structure#
     #######################
     if persist:
+        ali_structure = add_com_to_pdb(mhcii_com_3, vtcr_com, sample_model)
         io = Bio.PDB.PDBIO()
-        io.set_structure(sample_model)
+        io.set_structure(ali_structure)
         io.save("./%s_rotated.pdb" % pdbid)
     #########################
     # Geometrical parameters#
