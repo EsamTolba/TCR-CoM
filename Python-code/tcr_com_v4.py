@@ -117,6 +117,7 @@ def center_of_mass(entity, geometric=False):
 
 
 def fetch_atoms(model, selection="A", atom_bounds=[1, 179]):
+    selection = selection.upper()
     if not isinstance(atom_bounds, (list, tuple)) and len(atom_bounds) > 0:
         raise ValueError("expected non-empty list or tuple, got {}".format(atom_bounds))
     # making sure its a list of lists
@@ -204,12 +205,6 @@ def tcr_mhci_geometrical_parameters(
     ###############################################################################
     # Define residue range for center of mass and principal component calculations#
     ###############################################################################
-    mhc_a_init = 1
-    mhc_a_final = 179
-    tcr_a_init = 1
-    tcr_a_final = 109
-    tcr_b_init = 1
-    tcr_b_final = 116
     mhc_a_bounds = [1, 179]
     tcr_a_bounds = [1, 109]
     tcr_b_bounds = [1, 116]
@@ -388,7 +383,8 @@ tcr_b = args.tcr_b
 output_pdb = args.output_pdb
 
 input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
-for input_chain_id in input_chain_IDs:
+input_chain_IDs_upper = [x.upper() for x in input_chain_IDs]
+for input_chain_id in input_chain_IDs_upper:
     if not is_chain_in_pdb(pdbid, input_chain_id):
         raise ValueError(
             'Chain "%s" is not found in "%s.pdb"!' % (input_chain_id, pdbid)
