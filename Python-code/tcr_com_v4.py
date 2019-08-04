@@ -28,24 +28,36 @@ parser.add_argument("-tcr_b", type=str, help="ID of TCR beta chain")
 parser.add_argument("-output_pdb", type=str, help="Output_PDB_structure")
 
 
-def add_com_to_pdb(mhci_com, vtcr_com, sample_structure):
-    #mhc_com
-    mhc_com_chain = 'X'
+def add_com_to_pdb(mhc_com, vtcr_com, sample_structure):
+    # mhc_com
+    mhc_com_chain = "X"
     sample_structure.add(Chain(mhc_com_chain))
-    res_id = (' ', 1, ' ')
-    new_residue = Residue(res_id, "MCM", ' ') 
-    new_atom = Atom("C", mhci_com, 0, 0.0, ' ', "C", 1, "C")
+    res_id = (" ", 1, " ")
+    new_residue = Residue(res_id, "MCM", " ")
+    new_atom = Atom("C", mhc_com, 0, 0.0, " ", "C", 1, "C")
     new_residue.add(new_atom)
     sample_structure.child_dict[mhc_com_chain].add(new_residue)
-    #tcr com
-    tcr_com_chain = 'Y'
+    # tcr com
+    tcr_com_chain = "Y"
     sample_structure.add(Chain(tcr_com_chain))
-    res_id = (' ', 1, ' ')
-    new_residue = Residue(res_id, "TCM", ' ') 
-    new_atom = Atom("C", vtcr_com, 0, 0.0, ' ', "C", 1, "C")
+    res_id = (" ", 1, " ")
+    new_residue = Residue(res_id, "TCM", " ")
+    new_atom = Atom("C", vtcr_com, 0, 0.0, " ", "C", 1, "C")
     new_residue.add(new_atom)
     sample_structure.child_dict[tcr_com_chain].add(new_residue)
+    # X,Y,Z atoms
+    pos = [[50, 0, 0], [0, 50, 0], [0, 0, 50]]
+    resn = ["X", "Y", "Z"]
+    xyz_chain = "Z"
+    sample_structure.add(Chain(xyz_chain))
+    for i in [0, 1, 2]:
+        res_id = (" ", i + 1, " ")
+        new_residue = Residue(res_id, resn[i], " ")
+        new_atom = Atom("O", pos[i], 0, 0.0, " ", "O", 1, "O")
+        new_residue.add(new_atom)
+        sample_structure.child_dict[xyz_chain].add(new_residue)
     return sample_structure
+
 
 """
 Module with assorted geometrical functions on
@@ -167,17 +179,19 @@ def number_of_chains(pdbid):
         counter += 1
     return counter
 
+
 def str2bool(v):
     if isinstance(v, bool):
-       return v
+        return v
     if v is None:
-        return True   
-    if v.lower() in ('TRUE', 'True','yes', 'true', 't', 'y', '1'):
         return True
-    elif v.lower() in ('FALSE','False', 'no', 'false', 'f', 'n', '0'):
+    if v.lower() in ("TRUE", "True", "yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("FALSE", "False", "no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
 
 """
 Geometrical parameters of TCR-MHC class I
@@ -388,4 +402,6 @@ if n_chains < 3 or n_chains > 5:
 if mhc_b is None:
     tcr_mhci_geometrical_parameters(pdbid, mhc_a, tcr_a, tcr_b, str2bool(output_pdb))
 else:
-    tcr_mhcii_geometrical_parameters(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, str2bool(output_pdb))
+    tcr_mhcii_geometrical_parameters(
+        pdbid, mhc_a, mhc_b, tcr_a, tcr_b, str2bool(output_pdb)
+    )
