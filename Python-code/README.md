@@ -34,4 +34,4 @@ python tcr_com_v4.py -pdbid XXX -mhc_chain_a A -mhc_chain_b A -tcr_chain_a D -tc
 - Refine the submitted PDB file by one of the available PDB-editors to avoid inaccurate results
 - The submitted structure of MHCI-TCR or MHCII-TCR should not contain more than five chains
 - The code requires defining at least 3 chain IDs for MHCI-TCR or 4 chain IDs for MHCII-TCR
-- Please make sure that the defined chains do not contain any solvent molecules
+- Please make sure that the defined chains do not contain any non-protein atoms

@@ -46,4 +46,4 @@ tcr_mhcii_pos selection [,mhc_a=None [,mhc_b=None [,tcr_a = None [,tcr_b = None 
 - Refine the submitted PDB file by one of the available PDB-editors to avoid inaccurate results
 - The submitted structure of MHCI-TCR or MHCII-TCR should not contain more than five chains
 - The code requires defining at least 3 chain IDs for MHCI-TCR or 4 chain IDs for MHCII-TCR
-- Please make sure that the defined chains do not contain any solvent molecules
+- Please make sure that the defined chains do not contain any non-protein atoms
