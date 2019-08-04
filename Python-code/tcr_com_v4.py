@@ -147,6 +147,8 @@ def number_of_chains(pdbid):
 def str2bool(v):
     if isinstance(v, bool):
        return v
+    if v is None:
+        return True   
     if v.lower() in ('TRUE', 'True','yes', 'true', 't', 'y', '1'):
         return True
     elif v.lower() in ('FALSE','False', 'no', 'false', 'f', 'n', '0'):
