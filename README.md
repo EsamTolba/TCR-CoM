@@ -43,7 +43,7 @@ tcr_mhcii_pos selection [,mhc_a=None [,mhc_b=None [,tcr_a = None [,tcr_b = None 
 **Notes**
 ---------
 - The approach is available as Python code, Pymol plugin, and online tool: https://tcr3d.ibbr.umd.edu/tcr_com
-- Refine the submitted PDB file by one of the available PDB-editors to avoid inaccurate results
+- The submitted PDB-file should be refined by one of the available PDB-editors to avoid inaccurate results
 - The submitted structure of MHCI-TCR or MHCII-TCR should not contain more than five chains
-- The code requires defining at least 3 chain IDs for MHCI-TCR or 4 chain IDs for MHCII-TCR
+- The code requires defining at least three chain-IDs for MHCI-TCR or four chain-IDs for MHCII-TCR
 - Please make sure that the defined chains do not contain any non-protein atoms
