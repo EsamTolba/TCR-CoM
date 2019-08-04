@@ -22,7 +22,7 @@ parser.add_argument("-mhc_a", type=str, help="ID of MHC alpha chain")
 parser.add_argument("-mhc_b", type=str, default=None, help="ID of MHC beta chain")
 parser.add_argument("-tcr_a", type=str, help="ID of TCR alpha chain")
 parser.add_argument("-tcr_b", type=str, help="ID of TCR beta chain")
-
+parser.add_argument("-output_pdb", type=str, help="Output_PDB_structure")
 
 """
 Module with assorted geometrical functions on
@@ -144,6 +144,15 @@ def number_of_chains(pdbid):
         counter += 1
     return counter
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('TRUE', 'True','yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('FALSE','False', 'no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 """
 Geometrical parameters of TCR-MHC class I
@@ -335,6 +344,7 @@ mhc_a = args.mhc_a
 mhc_b = args.mhc_b
 tcr_a = args.tcr_a
 tcr_b = args.tcr_b
+output_pdb = args.output_pdb
 
 input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
 for input_chain_id in input_chain_IDs:
@@ -345,10 +355,10 @@ for input_chain_id in input_chain_IDs:
 n_chains = number_of_chains(pdbid)
 if n_chains < 3 or n_chains > 5:
     raise ValueError(
-        '"%s.pdb" contains unexpected number of chains! (expected 3, 4, or 5, got %s)'
+        '"%s.pdb" contains unexpected number of chains! (expected 4, got %s)'
         % (pdbid, n_chains)
     )
 if mhc_b is None:
-    tcr_mhci_geometrical_parameters(pdbid, mhc_a, tcr_a, tcr_b)
+    tcr_mhci_geometrical_parameters(pdbid, mhc_a, tcr_a, tcr_b, str2bool(output_pdb))
 else:
-    tcr_mhcii_geometrical_parameters(pdbid, mhc_a, mhc_b, tcr_a, tcr_b)
+    tcr_mhcii_geometrical_parameters(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, str2bool(output_pdb))
