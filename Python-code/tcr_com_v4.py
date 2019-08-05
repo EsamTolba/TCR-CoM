@@ -12,6 +12,7 @@ from Bio.PDB.Residue import Residue
 from Bio.PDB.Atom import Atom
 from Bio.Cluster import pca
 from itertools import chain
+from Bio.PDB import Entity
 
 # from sklearn.decomposition import PCA
 # import mdtraj as md
@@ -27,8 +28,15 @@ parser.add_argument("-tcr_a", type=str, help="ID of TCR alpha chain")
 parser.add_argument("-tcr_b", type=str, help="ID of TCR beta chain")
 parser.add_argument("-output_pdb", type=str, help="Output_PDB_structure")
 
+"""
+Function to process inputs
+"""
+
 
 def add_com_to_pdb(mhc_com, vtcr_com, sample_structure):
+    """
+    Function to add pseudoatoms at MHC-CoM, TCR-CoM, and XYZ axise to the output PDB file
+    """
     # mhc_com
     mhc_com_chain = "X"
     sample_structure.add(Chain(mhc_com_chain))
@@ -59,23 +67,15 @@ def add_com_to_pdb(mhc_com, vtcr_com, sample_structure):
     return sample_structure
 
 
-"""
-Module with assorted geometrical functions on
-macromolecules.
-"""
-# Copyright (C) 2010, Joao Rodrigues (anaryin@gmail.com)
-# This code is part of the Biopython distribution and governed by its
-# license.  Please see the LICENSE file that should have been included
-# as part of this package.
-from Bio.PDB import Entity
-
-
 def center_of_mass(entity, geometric=False):
+    # Copyright (C) 2010, Joao Rodrigues (anaryin@gmail.com)
+    # This code is part of the Biopython distribution and governed by its
+    # license.  Please see the LICENSE file that should have been included
+    # as part of this package.
     """
     Returns gravitic [default] or geometric center of mass of an Entity.
     Geometric assumes all masses are equal (geometric=True)
     """
-
     # Structure, Model, Chain, Residue
     if isinstance(entity, Entity.Entity):
         atom_list = entity.get_atoms()
@@ -117,6 +117,9 @@ def center_of_mass(entity, geometric=False):
 
 
 def fetch_atoms(model, selection="A", atom_bounds=[1, 179]):
+    """
+    Function to fetch atoms from the defined "atom_bound" in "selection" of the "model"
+    """
     selection = selection.upper()
     if not isinstance(atom_bounds, (list, tuple)) and len(atom_bounds) > 0:
         raise ValueError("expected non-empty list or tuple, got {}".format(atom_bounds))
@@ -143,18 +146,19 @@ def fetch_atoms(model, selection="A", atom_bounds=[1, 179]):
 
 
 def apply_transformation_to_atoms(model, rotmat, transvec):
+    """
+    Function to translate/rotate the model by the defined translation vector and rotation matrix
+    """
     for chain in model:
         for res in chain:
             for atom in res:
                 atom.transform(rotmat, transvec)
 
 
-"""
-Function to check inputs
-"""
-
-
 def is_chain_in_pdb(pdbid, input_chain_id):
+    """
+    Function to check if the input_chain_id is in pdb_chain_ids_list
+    """
     from Bio.PDB import PDBParser
     import sys
 
@@ -164,11 +168,12 @@ def is_chain_in_pdb(pdbid, input_chain_id):
     for chain in model:
         pdb_chain_ids_list.append(str(chain.get_id()))
     return input_chain_id in pdb_chain_ids_list
-    # if input_chain_id not in pdb_chain_ids_list:
-    #
 
 
 def number_of_chains(pdbid):
+    """
+    Function to check the number of chains in the input structure
+    """
     from Bio.PDB import PDBParser
     import sys
 
@@ -202,6 +207,14 @@ Geometrical parameters of TCR-MHC class I
 def tcr_mhci_geometrical_parameters(
     pdbid, mhc_a="A", tcr_a="D", tcr_b="E", persist_structure=True
 ):
+    """
+    ARGUMENTS:
+    pdbid = PDB-ID or name of the input PB file (str)
+    mhc_a = ID of MHC alpha chain (str)
+    tcr_a = ID of TCR alpha chain (str)
+    tcr_b = ID of TCR beta chain (str)
+    persist_structure = If true, save the processed structure as PDB-file (Boolean)
+    """
     ###############################################################################
     # Define residue range for center of mass and principal component calculations#
     ###############################################################################
@@ -288,6 +301,15 @@ Geometrical parameters of TCR-MHC class II
 def tcr_mhcii_geometrical_parameters(
     pdbid, mhc_a="A", mhc_b="B", tcr_a="D", tcr_b="E", persist=True
 ):
+    """
+    ARGUMENTS:
+    pdbid = PDB-ID or name of the input PB file (str)
+    mhc_a = ID of MHC alpha chain (str)
+    mhc_b = ID of MHC beta chain (str)
+    tcr_a = ID of TCR alpha chain (str)
+    tcr_b = ID of TCR beta chain (str)
+    persist_structure = If true, save the processed structure as PDB-file (Boolean)
+    """
     ###############################################################################
     # Define residue range for center of mass and principal component calculations#
     ###############################################################################
@@ -376,6 +398,10 @@ def tcr_mhcii_geometrical_parameters(
 # For Python script
 args = parser.parse_args()
 pdbid = args.pdbid
+if pdbid.endswith(".pdb"):
+    pdbid = pdbid.split(".")[0]
+else:
+    pdbid = pdbid
 mhc_a = args.mhc_a
 mhc_b = args.mhc_b
 tcr_a = args.tcr_a
