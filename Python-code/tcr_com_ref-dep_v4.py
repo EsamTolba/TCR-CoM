@@ -13,10 +13,18 @@ from Bio.PDB.Atom import Atom
 from Bio.Cluster import pca
 from itertools import chain
 from Bio.PDB import Entity
+import time
 
 # from sklearn.decomposition import PCA
 # import mdtraj as md
 
+"""
+Logging info
+"""
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+output_name = "%s_tcr_com_ref-dep_v4.log" % current_time
+output_file = open(output_name, "a")
+sys.stdout = output_file
 """
 Define arguments
 """
@@ -266,7 +274,8 @@ def tcr_mhci_geometrical_parameters(
         sample_model, selection=tcr_b, atom_bounds=tcr_b_bounds
     )
     vtcr_com = center_of_mass(tcr_atoms_for_com, geometric=True)
-
+    print("MHC-CoM: ", [round(x, 2) for x in mhci_com])
+    print("vTCR-CoM: ", [round(x, 2) for x in vtcr_com])
     #######################
     # Save final structure#
     #######################
@@ -360,7 +369,8 @@ def tcr_mhcii_geometrical_parameters(
         sample_model, selection=tcr_b, atom_bounds=tcr_b_bounds
     )
     vtcr_com = center_of_mass(tcr_atoms_for_com, geometric=True)
-
+    print("MHC-CoM: ", [round(x, 2) for x in mhcii_com])
+    print("vTCR-CoM: ", [round(x, 2) for x in vtcr_com])
     #######################
     # Save final structure#
     #######################
@@ -391,14 +401,19 @@ def tcr_mhcii_geometrical_parameters(
 # For Python script
 args = parser.parse_args()
 pdbid = args.pdbid
+print("PDB-file: %s" % pdbid)
 if pdbid.endswith(".pdb"):
     pdbid = pdbid.split(".")[0]
 else:
     pdbid = pdbid
 mhc_a = args.mhc_a
+print("MHC alpha chain-ID: %s" % mhc_a)
 mhc_b = args.mhc_b
+print("MHC beta chain-ID: %s" % mhc_b)
 tcr_a = args.tcr_a
+print("TCR alpha chain-ID: %s" % tcr_a)
 tcr_b = args.tcr_b
+print("TCR beta chain-ID: %s" % tcr_b)
 output_pdb = args.output_pdb
 
 input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
@@ -412,8 +427,7 @@ for input_chain_id in input_chain_IDs_upper:
 n_chains = number_of_chains(pdbid)
 if n_chains < 3 or n_chains > 5:
     raise ValueError(
-        '"%s.pdb" contains unexpected number of chains! (expected 4, got %s)'
-        % (pdbid, n_chains)
+        "The submitted PDB file contains unexpected number of chains! (expected 5 chains)"
     )
 if mhc_b is None:
     tcr_mhci_geometrical_parameters(pdbid, mhc_a, tcr_a, tcr_b, str2bool(output_pdb))
