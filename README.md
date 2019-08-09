@@ -19,12 +19,12 @@ __USAGE__
 
 1- For peptide-MHC class I-TCR complex:
 ```
-python TCR_com_v4.py -pdbid XXX -mhc_chain_a A -tcr_chain_a D -tcr_chain_b E -output_pdb True
+python tcr_com_ref-dep_v5.py -pdbid XXX -mhc_chain_a A -tcr_chain_a D -tcr_chain_b E -output_pdb True
 ```
 
 2- For peptide-MHC class II-TCR complex:
 ```
-python TCR_com_v4.py -pdbid XXX -mhc_chain_a A -mhc_chain_b A -tcr_chain_a D -tcr_chain_b E -output_pdb True
+python tcr_com_ref-dep_v5.py -pdbid XXX -mhc_chain_a A -mhc_chain_b A -tcr_chain_a D -tcr_chain_b E -output_pdb True
 ```
 
 ### Pymol plugin
