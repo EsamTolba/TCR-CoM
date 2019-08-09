@@ -19,13 +19,6 @@ import time
 # import mdtraj as md
 
 """
-Logging info
-"""
-current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-output_name = "%s_tcr_com_ref-dep_v4.log" % current_time
-output_file = open(output_name, "a")
-sys.stdout = output_file
-"""
 Define arguments
 """
 parser = argparse.ArgumentParser(
@@ -37,6 +30,26 @@ parser.add_argument("-mhc_b", type=str, default=None, help="ID of MHC beta chain
 parser.add_argument("-tcr_a", type=str, help="ID of TCR alpha chain")
 parser.add_argument("-tcr_b", type=str, help="ID of TCR beta chain")
 parser.add_argument("-output_pdb", type=str, help="Output_PDB_structure")
+
+args = parser.parse_args()
+pdbid = args.pdbid
+if pdbid.endswith(".pdb"):
+    pdbid = pdbid.split(".")[0]
+else:
+    pdbid = pdbid
+mhc_a = args.mhc_a
+mhc_b = args.mhc_b
+tcr_a = args.tcr_a
+tcr_b = args.tcr_b
+output_pdb = args.output_pdb
+
+"""
+Logging info
+"""
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+output_name = "%s_tcr_com_%s.log" % (current_time, pdbid)
+output_file = open(output_name, "a")
+sys.stdout = output_file
 
 """
 Define reference structures
@@ -133,7 +146,7 @@ def center_of_mass(entity, geometric=False):
         return [sum(coord_list) / sum(masses) for coord_list in w_pos]
 
 
-def fetch_atoms(model, selection="A", atom_bounds=[1, 179]):
+def fetch_atoms(model, selection="A", atom_bounds=[1, 180]):
     """
     Function to fetch atoms from the defined "atom_bound" in "selection" of the "model"
     """
@@ -159,6 +172,29 @@ def fetch_atoms(model, selection="A", atom_bounds=[1, 179]):
                 in_bounds |= bounds[0] <= resid and resid <= bounds[1]
             if in_bounds:
                 result.append(ref_res["CA"])
+    return result
+
+
+def fetch_entity(model, fetch_atoms=True, selection="A", res_ids=range(1, 180)):
+    """
+    Function to fetch atoms/resids from the defined "resid_bounds" in "selection" of the "model"
+    """
+    # fetch atoms
+    if fetch_atoms is True:
+        result = []
+        for sel in selection:
+            for sample_res in model["%s" % sel]:
+                resid = sample_res.get_id()[1]
+                if resid in res_ids:
+                    result.append(sample_res["CA"])
+    # fetch_residues_indeces
+    elif fetch_atoms is False:
+        result = []
+        for sel in selection:
+            for sample_res in model["%s" % sel]:
+                resid = sample_res.get_id()[1]
+                if resid in res_ids:
+                    result.append(resid)
     return result
 
 
@@ -242,9 +278,9 @@ def tcr_mhci_geometrical_parameters(
     #################################################################
     # Define residues range to align and center of mass calculations#
     #################################################################
-    mhc_a_bounds = [mhc_a_init, mhc_a_final]
-    tcr_a_bounds = [tcr_a_init, tcr_a_final]
-    tcr_b_bounds = [tcr_b_init, tcr_b_final]
+    mhc_a_resids = range(mhc_a_init, mhc_a_final + 1)
+    tcr_a_resids = range(tcr_a_init, tcr_a_final + 1)
+    tcr_b_resids = range(tcr_b_init, tcr_b_final + 1)
 
     ########################################################################################################
     # Import structure, align to reference, and calculate center of mass of CA atoms in MHCI binding groove#
@@ -256,10 +292,18 @@ def tcr_mhci_geometrical_parameters(
     ref_model = ref_structure[0]
     sample_model = sample_structure[0]
     # Iterate of all residues in each model in order to define proper atoms
-    # Reference structure
-    ref_atoms = fetch_atoms(ref_model, selection=mhc_a, atom_bounds=mhc_a_bounds)
     # Sample structure
-    sample_atoms = fetch_atoms(sample_model, selection=mhc_a, atom_bounds=mhc_a_bounds)
+    sample_resids = fetch_entity(
+        sample_model, fetch_atoms=False, selection=mhc_a, res_ids=mhc_a_resids
+    )
+    sample_atoms = fetch_entity(
+        sample_model, fetch_atoms=True, selection=mhc_a, res_ids=sample_resids
+    )
+    # Reference structure
+    ref_atoms = fetch_entity(
+        ref_model, fetch_atoms=True, selection=mhc_a, res_ids=sample_resids
+    )
+
     # Initiate the superimposer:
     super_imposer = Bio.PDB.Superimposer()
     super_imposer.set_atoms(ref_atoms, sample_atoms)
@@ -267,11 +311,11 @@ def tcr_mhci_geometrical_parameters(
     # Calculate CoM of MHCI binding groove
     mhci_com = center_of_mass(sample_atoms, geometric=True)
     # Calculate CoM of vTCR
-    tcr_atoms_for_com = fetch_atoms(
-        sample_model, selection=tcr_a, atom_bounds=tcr_a_bounds
+    tcr_atoms_for_com = fetch_entity(
+        sample_model, fetch_atoms=True, selection=tcr_a, res_ids=tcr_a_resids
     )
-    tcr_atoms_for_com += fetch_atoms(
-        sample_model, selection=tcr_b, atom_bounds=tcr_b_bounds
+    tcr_atoms_for_com += fetch_entity(
+        sample_model, fetch_atoms=True, selection=tcr_b, res_ids=tcr_b_resids
     )
     vtcr_com = center_of_mass(tcr_atoms_for_com, geometric=True)
     print("MHC-CoM: ", [round(x, 2) for x in mhci_com])
@@ -335,10 +379,10 @@ def tcr_mhcii_geometrical_parameters(
     #################################################################
     # Define residues range to align and center of mass calculations#
     #################################################################
-    mhc_a_bounds = [mhc_a_init, mhc_a_final]
-    mhc_b_bounds = [mhc_b_init, mhc_b_final]
-    tcr_a_bounds = [tcr_a_init, tcr_a_final]
-    tcr_b_bounds = [tcr_b_init, tcr_b_final]
+    mhc_a_resids = range(mhc_a_init, mhc_a_final + 1)
+    mhc_b_resids = range(mhc_b_init, mhc_b_final + 1)
+    tcr_a_resids = range(tcr_a_init, tcr_a_final + 1)
+    tcr_b_resids = range(tcr_b_init, tcr_b_final + 1)
 
     #########################################################################################################
     # Import structure, align to reference, and calculate center of mass of CA atoms in MHCII binding groove#
@@ -349,12 +393,20 @@ def tcr_mhcii_geometrical_parameters(
     ref_model = ref_structure[0]
     sample_model = sample_structure[0]
     # Iterate of all residues in each model in order to define proper atoms
-    # Reference structure
-    ref_atoms = fetch_atoms(ref_model, selection=mhc_a, atom_bounds=mhc_a_bounds)
-    ref_atoms += fetch_atoms(ref_model, selection=mhc_b, atom_bounds=mhc_b_bounds)
     # Sample structure
-    sample_atoms = fetch_atoms(sample_model, selection=mhc_a, atom_bounds=mhc_a_bounds)
-    sample_atoms += fetch_atoms(sample_model, selection=mhc_b, atom_bounds=mhc_b_bounds)
+    sample_resids_a = fetch_entity(
+        sample_model, fetch_atoms=False, selection=mhc_a, res_ids=mhc_a_resids
+    )
+    sample_resids_b = fetch_entity(
+        sample_model, fetch_atoms=False, selection=mhc_b, res_ids=mhc_b_resids
+    )
+
+    sample_atoms = fetch_entity(sample_model, selection=mhc_a, res_ids=sample_resids_a)
+    sample_atoms += fetch_entity(sample_model, selection=mhc_b, res_ids=sample_resids_b)
+    # Reference structure
+    ref_atoms = fetch_entity(ref_model, selection=mhc_a, res_ids=sample_resids_a)
+    ref_atoms += fetch_entity(ref_model, selection=mhc_b, res_ids=sample_resids_b)
+
     # Initiate the superimposer:
     super_imposer = Bio.PDB.Superimposer()
     super_imposer.set_atoms(ref_atoms, sample_atoms)
@@ -362,11 +414,11 @@ def tcr_mhcii_geometrical_parameters(
     # Calculate CoM of MHCII binding groove
     mhcii_com = center_of_mass(sample_atoms, geometric=True)
     # Calculate CoM of vTCR
-    tcr_atoms_for_com = fetch_atoms(
-        sample_model, selection=tcr_a, atom_bounds=tcr_a_bounds
+    tcr_atoms_for_com = fetch_entity(
+        sample_model, selection=tcr_a, res_ids=tcr_a_resids
     )
-    tcr_atoms_for_com += fetch_atoms(
-        sample_model, selection=tcr_b, atom_bounds=tcr_b_bounds
+    tcr_atoms_for_com += fetch_entity(
+        sample_model, selection=tcr_b, res_ids=tcr_b_resids
     )
     vtcr_com = center_of_mass(tcr_atoms_for_com, geometric=True)
     print("MHC-CoM: ", [round(x, 2) for x in mhcii_com])
@@ -399,22 +451,11 @@ def tcr_mhcii_geometrical_parameters(
 # ------------
 
 # For Python script
-args = parser.parse_args()
-pdbid = args.pdbid
 print("PDB-file: %s" % pdbid)
-if pdbid.endswith(".pdb"):
-    pdbid = pdbid.split(".")[0]
-else:
-    pdbid = pdbid
-mhc_a = args.mhc_a
 print("MHC alpha chain-ID: %s" % mhc_a)
-mhc_b = args.mhc_b
 print("MHC beta chain-ID: %s" % mhc_b)
-tcr_a = args.tcr_a
 print("TCR alpha chain-ID: %s" % tcr_a)
-tcr_b = args.tcr_b
 print("TCR beta chain-ID: %s" % tcr_b)
-output_pdb = args.output_pdb
 
 input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
 input_chain_IDs_upper = [x.upper() for x in input_chain_IDs]

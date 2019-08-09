@@ -13,11 +13,21 @@ from Bio.PDB.Atom import Atom
 from Bio.Cluster import pca
 from itertools import chain
 from Bio.PDB import Entity
-
 # from sklearn.decomposition import PCA
 # import mdtraj as md
+import time
 
-"""Define arguments"""
+"""
+Logging info
+"""
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+output_name = "%s_tcr_com_v4.log" % current_time
+output_file = open(output_name, "a")
+sys.stdout = output_file
+
+"""
+Define arguments
+"""
 parser = argparse.ArgumentParser(
     description="TCR-CoM calculates the geometrical parameters (r, theta, phi) of T cell receptors (TCR) on the top of MHC proteins"
 )
@@ -258,15 +268,16 @@ def tcr_mhci_geometrical_parameters(
     ##########################
     translation_vector = np.array(mhci_com_2)
     apply_transformation_to_atoms(sample_model, np.eye(3), -translation_vector)
-    sample_atoms = fetch_atoms(sample_model, mhc_a, mhci_com_atoms)
 
     # Calculate CoM of MHCI binding groove
+    sample_atoms = fetch_atoms(sample_model, mhc_a, mhci_com_atoms)
     mhci_com_3 = center_of_mass(sample_atoms, geometric=True)
     # Calculate CoM of vTCR
     tcr_atoms_for_com = fetch_atoms(sample_model, tcr_a, tcr_a_bounds)
     tcr_atoms_for_com += fetch_atoms(sample_model, tcr_b, tcr_b_bounds)
     vtcr_com = center_of_mass(tcr_atoms_for_com, geometric=True)
-
+    print("MHC-CoM: ", [round(x, 2) for x in mhci_com_3])
+    print("vTCR-CoM: ", [round(x, 2) for x in vtcr_com])
     #######################
     # Save final structure#
     #######################
@@ -368,7 +379,8 @@ def tcr_mhcii_geometrical_parameters(
     tcr_atoms_for_com = fetch_atoms(sample_model, tcr_a, tcr_a_bounds)
     tcr_atoms_for_com += fetch_atoms(sample_model, tcr_b, tcr_b_bounds)
     vtcr_com = center_of_mass(tcr_atoms_for_com, geometric=True)
-
+    print("MHC-CoM: ", [round(x, 2) for x in mhcii_com_3])
+    print("vTCR-CoM: ", [round(x, 2) for x in vtcr_com])
     #######################
     # Save final structure#
     #######################
@@ -398,14 +410,19 @@ def tcr_mhcii_geometrical_parameters(
 # For Python script
 args = parser.parse_args()
 pdbid = args.pdbid
+print("PDB-file: %s" % pdbid)
 if pdbid.endswith(".pdb"):
     pdbid = pdbid.split(".")[0]
 else:
     pdbid = pdbid
 mhc_a = args.mhc_a
+print("MHC alpha chain-ID: %s" % mhc_a)
 mhc_b = args.mhc_b
+print("MHC beta chain-ID: %s" % mhc_b)
 tcr_a = args.tcr_a
+print("TCR alpha chain-ID: %s" % tcr_a)
 tcr_b = args.tcr_b
+print("TCR beta chain-ID: %s" % tcr_b)
 output_pdb = args.output_pdb
 
 input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
