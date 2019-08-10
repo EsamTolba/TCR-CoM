@@ -442,12 +442,6 @@ def tcr_mhcii_geometrical_parameters(
 
 # ------------
 
-# For Python script
-print("PDB-file: %s" % pdbid)
-print("MHC alpha chain-ID: %s" % mhc_a)
-print("MHC beta chain-ID: %s" % mhc_b)
-print("TCR alpha chain-ID: %s" % tcr_a)
-print("TCR beta chain-ID: %s" % tcr_b)
 
 def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb): 
     if pdbid.endswith(".pdb"):
@@ -464,6 +458,12 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     output_file = open(output_name, "a")
     sys.stdout = output_file
 
+    # For Python script
+    print("PDB-file: %s" % pdbid)
+    print("MHC alpha chain-ID: %s" % mhc_a)
+    print("MHC beta chain-ID: %s" % mhc_b)
+    print("TCR alpha chain-ID: %s" % tcr_a)
+    print("TCR beta chain-ID: %s" % tcr_b)
 
     input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
     input_chain_IDs_upper = [x.upper() for x in input_chain_IDs]
