@@ -40,14 +40,6 @@ tcr_a = args.tcr_a
 tcr_b = args.tcr_b
 output_pdb = args.output_pdb
 
-"""
-Logging info
-"""
-current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-output_name = "%s_tcr_com_%s.log" % (current_time, pdbid)
-#output_name = "%s.log" % (pdbid)
-output_file = open(output_name, "a")
-sys.stdout = output_file
 
 """
 Define reference structures
@@ -462,6 +454,16 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
         pdbid = pdbid.split(".")[0]
     else:
         pdbid = pdbid
+
+    """
+    Logging info
+    """
+    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+    output_name = "%s_tcr_com_%s.log" % (current_time, pdbid)
+    #output_name = "%s.log" % (pdbid)
+    output_file = open(output_name, "a")
+    sys.stdout = output_file
+
 
     input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
     input_chain_IDs_upper = [x.upper() for x in input_chain_IDs]
