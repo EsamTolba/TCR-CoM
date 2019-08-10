@@ -1,10 +1,15 @@
 # TCR-CoM
----------
+
+<img src="images/tcr_com.png" width="1000">
+
+
 For questions about running the script or for reporting bugs, please contact:<br/>
+
    *__Brian Baker__(brian-baker[at]nd.edu)*<br/>
 or<br/>
    *__Esam Abualrous__(e.abualrous[at]fu-berlin.de)*<br/>
 
+-------
 ### Description
    Calculates the geometrical parameters (r, theta, phi) of T cell receptors (TCR) on the top of MHC proteins
 
