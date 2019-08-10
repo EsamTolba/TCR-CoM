@@ -4,6 +4,7 @@
 
 
 For questions about running the script or for reporting bugs, please contact:<br/>
+
    *__Brian Baker__(brian-baker[at]nd.edu)*<br/>
 or<br/>
    *__Esam Abualrous__(e.abualrous[at]fu-berlin.de)*<br/>
