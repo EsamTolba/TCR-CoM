@@ -59,29 +59,29 @@ def add_com_to_pdb(mhc_com, vtcr_com, sample_structure):
     """
     # mhc_com
     mhc_com_chain = "X"
-    sample_structure.add(Bio.PDB.Chain(mhc_com_chain))
+    sample_structure.add(Chain.Chain(mhc_com_chain))
     res_id = (" ", 1, " ")
-    new_residue = Bio.PDB.Residue(res_id, "MCM", " ")
-    new_atom = Bio.PDB.Atom("C", mhc_com, 0, 0.0, " ", "C", 1, "C")
+    new_residue = Residue.Residue(res_id, "MCM", " ")
+    new_atom = Atom.Atom("C", mhc_com, 0, 0.0, " ", "C", 1, "C")
     new_residue.add(new_atom)
     sample_structure.child_dict[mhc_com_chain].add(new_residue)
     # tcr com
     tcr_com_chain = "Y"
-    sample_structure.add(Bio.PDB.Chain(tcr_com_chain))
+    sample_structure.add(Chain.Chain(tcr_com_chain))
     res_id = (" ", 1, " ")
-    new_residue = Bio.PDB.Residue(res_id, "TCM", " ")
-    new_atom = Bio.PDB.Atom("C", vtcr_com, 0, 0.0, " ", "C", 1, "C")
+    new_residue = Residue.Residue(res_id, "TCM", " ")
+    new_atom = Atom.Atom("C", vtcr_com, 0, 0.0, " ", "C", 1, "C")
     new_residue.add(new_atom)
     sample_structure.child_dict[tcr_com_chain].add(new_residue)
     # X,Y,Z atoms
     pos = [[50, 0, 0], [0, 50, 0], [0, 0, 50]]
     resn = ["X", "Y", "Z"]
     xyz_chain = "Z"
-    sample_structure.add(Bio.PDB.Chain(xyz_chain))
+    sample_structure.add(Chain.Chain(xyz_chain))
     for i in [0, 1, 2]:
         res_id = (" ", i + 1, " ")
-        new_residue = Bio.PDB.Residue(res_id, resn[i], " ")
-        new_atom = Bio.PDB.Atom("O", pos[i], 0, 0.0, " ", "O", 1, "O")
+        new_residue = Residue.Residue(res_id, resn[i], " ")
+        new_atom = Atom.Atom("O", pos[i], 0, 0.0, " ", "O", 1, "O")
         new_residue.add(new_atom)
         sample_structure.child_dict[xyz_chain].add(new_residue)
     return sample_structure
