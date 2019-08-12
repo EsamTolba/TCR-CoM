@@ -53,6 +53,7 @@ Function to check inputs
 
 
 def add_com_to_pdb(mhc_com, vtcr_com, sample_structure):
+
     """
     Function to add pseudoatoms at MHC-CoM, TCR-CoM, and XYZ axise to the output PDB file
     """
@@ -447,7 +448,7 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     """
     Logging info
     """
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+    current_time = time.strftime("%m.%d.%y_%H:%M", time.localtime())
     output_name = "%s_tcr_com_%s.log" % (current_time, pdbid)
     output_file = open(output_name, "a")
     sys.stdout = output_file
