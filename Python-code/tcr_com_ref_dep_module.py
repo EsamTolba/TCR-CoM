@@ -7,14 +7,15 @@ import os
 import argparse
 import numpy as np
 import Bio.PDB
-from Bio.PDB.Chain import Chain
-from Bio.PDB.Residue import Residue
-from Bio.PDB.Atom import Atom
 from Bio.Cluster import pca
-from itertools import chain
 from Bio.PDB import Entity
+from Bio.PDB import PDBParser
 import time
 
+# from Bio.PDB.Chain import Chain
+# from Bio.PDB.Residue import Residue
+# from Bio.PDB.Atom import Atom
+# from itertools import chain
 # from sklearn.decomposition import PCA
 # import mdtraj as md
 
@@ -33,7 +34,6 @@ parser.add_argument("-output_pdb", type=str, help="Output_PDB_structure")
 
 args = parser.parse_args()
 pdbid = args.pdbid
-
 mhc_a = args.mhc_a
 mhc_b = args.mhc_b
 tcr_a = args.tcr_a
@@ -45,9 +45,8 @@ output_pdb = args.output_pdb
 Define reference structures
 """
 reffile_path = os.path.dirname(os.path.abspath(__file__))
-reffile1=os.path.join(reffile_path, "ref1.pdb")
-reffile2=os.path.join(reffile_path, "ref2.pdb")
-
+reffile1 = os.path.join(reffile_path, "ref1.pdb")
+reffile2 = os.path.join(reffile_path, "ref2.pdb")
 
 """
 Function to check inputs
@@ -204,8 +203,6 @@ def is_chain_in_pdb(pdbid, input_chain_id):
     """
     Function to check if the input_chain_id is in pdb_chain_ids_list
     """
-    from Bio.PDB import PDBParser
-    import sys
 
     pdb_chain_ids_list = []
     structure = PDBParser().get_structure("%s" % pdbid, "%s.pdb" % pdbid)
@@ -216,8 +213,6 @@ def is_chain_in_pdb(pdbid, input_chain_id):
 
 
 def number_of_chains(pdbid):
-    from Bio.PDB import PDBParser
-    import sys
 
     pdb_chain_ids_list = []
     structure = PDBParser().get_structure("%s" % pdbid, "%s.pdb" % pdbid)
@@ -380,6 +375,7 @@ def tcr_mhcii_geometrical_parameters(
     # Import structure, align to reference, and calculate center of mass of CA atoms in MHCII binding groove#
     #########################################################################################################
     pdb_parser = Bio.PDB.PDBParser(QUIET=True)
+    print(reffile2)
     ref_structure = pdb_parser.get_structure("reference", reffile2)
     sample_structure = pdb_parser.get_structure("sample", "./%s.pdb" % pdbid)
     ref_model = ref_structure[0]
@@ -443,7 +439,7 @@ def tcr_mhcii_geometrical_parameters(
 # ------------
 
 
-def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb): 
+def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     if pdbid.endswith(".pdb"):
         pdbid = pdbid.split(".")[0]
     else:
@@ -454,7 +450,6 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     """
     current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
     output_name = "%s_tcr_com_%s.log" % (current_time, pdbid)
-    #output_name = "%s.log" % (pdbid)
     output_file = open(output_name, "a")
     sys.stdout = output_file
 
@@ -471,21 +466,23 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     for input_chain_id in input_chain_IDs_upper:
         if not is_chain_in_pdb(pdbid, input_chain_id):
             raise ValueError(
-                'Chain "%s" is not found in "%s.pdb"!' % (input_chain_id, pdbid)
-                )
+                'Chain "%s" is not found in "%s.pdb"!'%(input_chain_id, pdbid)
+            )
 
     n_chains = number_of_chains(pdbid)
     if n_chains < 3 or n_chains > 5:
         raise ValueError(
             "The submitted PDB file contains unexpected number of chains! (expected 5 chains)"
-            )
+        )
     if mhc_b is None:
-        tcr_mhci_geometrical_parameters(pdbid, mhc_a, tcr_a, tcr_b, str2bool(output_pdb))
+        tcr_mhci_geometrical_parameters(
+            pdbid, mhc_a, tcr_a, tcr_b, str2bool(output_pdb)
+        )
     else:
         tcr_mhcii_geometrical_parameters(
             pdbid, mhc_a, mhc_b, tcr_a, tcr_b, str2bool(output_pdb)
-            )
-        
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
