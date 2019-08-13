@@ -7,12 +7,9 @@ import os
 import argparse
 import numpy as np
 import Bio.PDB
-from Bio.PDB.Chain import Chain
-from Bio.PDB.Residue import Residue
-from Bio.PDB.Atom import Atom
+from Bio.PDB import Entity, Chain, Residue, Atom, PDBParser
 from Bio.Cluster import pca
 from itertools import chain
-from Bio.PDB import Entity
 import time
 
 # from sklearn.decomposition import PCA
@@ -68,29 +65,29 @@ def add_com_to_pdb(mhc_com, vtcr_com, sample_structure):
     """
     # mhc_com
     mhc_com_chain = "X"
-    sample_structure.add(Chain(mhc_com_chain))
+    sample_structure.add(Chain.Chain(mhc_com_chain))
     res_id = (" ", 1, " ")
-    new_residue = Residue(res_id, "MCM", " ")
-    new_atom = Atom("C", mhc_com, 0, 0.0, " ", "C", 1, "C")
+    new_residue = Residue.Residue(res_id, "MCM", " ")
+    new_atom = Atom.Atom("C", mhc_com, 0, 0.0, " ", "C", 1, "C")
     new_residue.add(new_atom)
     sample_structure.child_dict[mhc_com_chain].add(new_residue)
     # tcr com
     tcr_com_chain = "Y"
-    sample_structure.add(Chain(tcr_com_chain))
+    sample_structure.add(Chain.Chain(tcr_com_chain))
     res_id = (" ", 1, " ")
-    new_residue = Residue(res_id, "TCM", " ")
-    new_atom = Atom("C", vtcr_com, 0, 0.0, " ", "C", 1, "C")
+    new_residue = Residue.Residue(res_id, "TCM", " ")
+    new_atom = Atom.Atom("C", vtcr_com, 0, 0.0, " ", "C", 1, "C")
     new_residue.add(new_atom)
     sample_structure.child_dict[tcr_com_chain].add(new_residue)
     # X,Y,Z atoms
     pos = [[50, 0, 0], [0, 50, 0], [0, 0, 50]]
     resn = ["X", "Y", "Z"]
     xyz_chain = "Z"
-    sample_structure.add(Chain(xyz_chain))
+    sample_structure.add(Chain.Chain(xyz_chain))
     for i in [0, 1, 2]:
         res_id = (" ", i + 1, " ")
-        new_residue = Residue(res_id, resn[i], " ")
-        new_atom = Atom("O", pos[i], 0, 0.0, " ", "O", 1, "O")
+        new_residue = Residue.Residue(res_id, resn[i], " ")
+        new_atom = Atom.Atom("O", pos[i], 0, 0.0, " ", "O", 1, "O")
         new_residue.add(new_atom)
         sample_structure.child_dict[xyz_chain].add(new_residue)
     return sample_structure
@@ -212,8 +209,6 @@ def is_chain_in_pdb(pdbid, input_chain_id):
     """
     Function to check if the input_chain_id is in pdb_chain_ids_list
     """
-    from Bio.PDB import PDBParser
-    import sys
 
     pdb_chain_ids_list = []
     structure = PDBParser().get_structure("%s" % pdbid, "%s.pdb" % pdbid)
@@ -224,8 +219,6 @@ def is_chain_in_pdb(pdbid, input_chain_id):
 
 
 def number_of_chains(pdbid):
-    from Bio.PDB import PDBParser
-    import sys
 
     pdb_chain_ids_list = []
     structure = PDBParser().get_structure("%s" % pdbid, "%s.pdb" % pdbid)
