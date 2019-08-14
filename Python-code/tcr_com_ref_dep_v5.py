@@ -51,8 +51,8 @@ sys.stdout = output_file
 """
 Define reference structures
 """
-reffile1 = "ref1.pdb"
-reffile2 = "ref2.pdb"
+reffile1 = "./dependancies/ref_files/ref1.pdb"
+reffile2 = "./dependancies/ref_files/ref2.pdb"
 
 """
 Function to check inputs
@@ -176,6 +176,7 @@ def fetch_entity(model, fetch_atoms=True, selection="A", res_ids=range(1, 180)):
     """
     Function to fetch atoms/resids from the defined "resid_bounds" in "selection" of the "model"
     """
+    selection = selection.upper()
     # fetch atoms
     if fetch_atoms is True:
         result = []

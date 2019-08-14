@@ -168,6 +168,7 @@ def fetch_entity(model, fetch_atoms=True, selection="A", res_ids=range(1, 180)):
     Function to fetch atoms/resids from the defined "resid_bounds" in "selection" of the "model"
     """
     # fetch atoms
+    selection = selection.upper()
     if fetch_atoms is True:
         result = []
         for sel in selection:
