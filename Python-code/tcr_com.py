@@ -325,7 +325,10 @@ def tcr_mhci_geometrical_parameters(
         "The Geomitrical parameters: r = {:.2f}, "
         "theta = {:.2f}, phi = {:.2f}".format(r, theta, phi)
     )
-    return r, theta, phi
+
+    mhci_com = [round(x,2) for x in mhci_com]
+    vtcr_com = [round(x,2) for x in vtcr_com]
+    return r, theta, phi, mhci_com, vtcr_com
 
 
 # tcr_mhci_pos('1ao7', mhc_a='A', tcr_a='D', tcr_b='E')
@@ -429,7 +432,10 @@ def tcr_mhcii_geometrical_parameters(
         "The Geomitrical parameters: r = {:.2f}, "
         "theta = {:.2f}, phi = {:.2f}".format(r, theta, phi)
     )
-    return r, theta, phi
+    mhcii_com = [round(x,2) for x in mhcii_com]
+    vtcr_com = [round(x,2) for x in vtcr_com]
+    return r, theta, phi, mhcii_com, vtcr_com
+
 
 
 # tcr_mhcii_pos('1FYT', mhc_a='A', mhc_b='B', tcr_a='D', tcr_b='E')
@@ -449,7 +455,7 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     current_time = time.strftime("%m.%d.%y_%H:%M", time.localtime())
     output_name = "%s_tcr_com_%s.log" % (current_time, pdbid)
     output_file = open(output_name, "a")
-    sys.stdout = output_file
+    #sys.stdout = output_file
 
     # For Python script
     print("PDB-file: %s" % pdbid)
@@ -457,6 +463,12 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
     print("MHC beta chain-ID: %s" % mhc_b)
     print("TCR alpha chain-ID: %s" % tcr_a)
     print("TCR beta chain-ID: %s" % tcr_b)
+
+    output_file.write("PDB-file: %s\n" % pdbid)
+    output_file.write("MHC alpha chain-ID: %s\n" % mhc_a)
+    output_file.write("MHC beta chain-ID: %s\n" % mhc_b)
+    output_file.write("TCR alpha chain-ID: %s\n" % tcr_a)
+    output_file.write("TCR beta chain-ID: %s\n" % tcr_b)
 
     input_chain_IDs = list(filter(None, [mhc_a, mhc_b, tcr_a, tcr_b]))
     input_chain_IDs_upper = [x.upper() for x in input_chain_IDs]
@@ -472,14 +484,24 @@ def main(pdbid, mhc_a, mhc_b, tcr_a, tcr_b, output_pdb):
         raise ValueError(
             "The submitted PDB file contains unexpected number of chains! (expected 5 chains)"
         )
+    result = ''
     if mhc_b is None:
-        tcr_mhci_geometrical_parameters(
+        result = tcr_mhci_geometrical_parameters(
             pdbid, mhc_a, tcr_a, tcr_b, str2bool(output_pdb)
         )
     else:
-        tcr_mhcii_geometrical_parameters(
+        result = tcr_mhcii_geometrical_parameters(
             pdbid, mhc_a, mhc_b, tcr_a, tcr_b, str2bool(output_pdb)
         )
+
+    output_file.write(
+        "The Geomitrical parameters: r = {:.2f}, "
+        "theta = {:.2f}, phi = {:.2f}\n".format(result[0], result[1], result[2])
+        )
+    mhc_com_values = ' '.join(str(v) for v in result[3])
+    vtcr_com_values = ' '.join(str(v) for v in result[4])
+    output_file.write("MHC-CoM: %s\n"  % mhc_com_values)
+    output_file.write("vTCR-CoM: %s\n"  % vtcr_com_values)
 
 
 if __name__ == "__main__":
