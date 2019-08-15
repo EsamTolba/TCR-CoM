@@ -1,6 +1,6 @@
 # TCR-CoM
 
-<img src="images/tcr_com2.png" width="1000">
+<img src="images/tcr_com.png" width="1000">
 
 
 For questions about running the script or for reporting bugs, please contact:<br/>
