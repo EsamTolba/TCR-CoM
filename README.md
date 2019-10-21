@@ -16,7 +16,7 @@ or<br/>
 ### Citation
 If you find this tool useful, please cite:
 ```
-Nishant K. Singh†, Esam T. Abualrous†, Cory M. Ayres, Frank Noé, Ragul Gowthaman, Brian G. Pierce, Brian M. Baker* "Geometrical characterization of T cell receptor binding modes reveals class-specific binding to maximize access to antigen" Proteins, 2019
+Singh, NK, Abualrous, ET, Ayres, CM, et al. Geometrical characterization of T cell receptor binding modes reveals class‐specific binding to maximize access to antigen. Proteins. 2019; 1– 11. https://doi.org/10.1002/prot.25829
 ```
 
 ### Python script
